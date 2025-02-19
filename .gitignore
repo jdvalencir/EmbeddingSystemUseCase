@@ -169,3 +169,33 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+**/node_modules
+**/.next
+**/.vscode
+**/.DS_Store
+**/.env
+**/.env.local
+**/.env.development
+**/.env.test
+**/.env.production
+**/.cache
+**/.history
+**/.npm
+**/.yarn
+**/.yarnrc
+**/.yarn-integrity
+**/yarn-error.log
+**/yarn.lock
+**/package-lock.json
+**/coverage
+**/coverage-final.json
+**/coverage-summary.json
+**/coverage/lcov-report
+**/coverage/lcov-report/index.html
+**/coverage/lcov-report/*.js
+**/coverage/lcov-report/*.css
+**/coverage/lcov-report/*.png
+**/coverage/lcov-report/*.svg
+**/coverage/lcov-report/*.html
+**/coverage/lcov-report/*.map
