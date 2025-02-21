@@ -1,7 +1,5 @@
 "use client";
 
-import { Chip, getKeyValue, Input } from "@heroui/react";
-import { Button } from "@heroui/react";
 import {
   Table,
   TableHeader,
@@ -9,7 +7,19 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Navbar,
+  NavbarBrand,
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Button,
+  Chip,
+  Input,
 } from "@heroui/react";
+import Image from "next/image";
 import { useCallback, useState } from "react";
 
 export default function Home() {
@@ -27,6 +37,7 @@ export default function Home() {
   const [data, setData] = useState<Response>();
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState<String>("");
 
   const PostFetch = async () => {
     try {
@@ -40,20 +51,20 @@ export default function Home() {
         }),
       });
       const data = await response.json();
+
       setData(data);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      setError(error);
     } finally {
       setLoading(false);
-      console.log("done");
     }
   };
 
   const columns = [
     { key: "key", label: "Key" },
-    { key: "text", label: "Text" },
-    { key: "similarity", label: "Similitud" },
+    { key: "date", label: "Date" },
+    { key: "text", label: "Log" },
+    { key: "similarity", label: "Similarity" },
   ];
 
   const renderCell = useCallback((dataItem: DataItem, columnKey: string) => {
@@ -62,6 +73,8 @@ export default function Home() {
     switch (columnKey) {
       case "key":
         return <Chip color="danger">{cellValue}</Chip>;
+      case "date":
+        return <p>{new Date(cellValue).toLocaleString()}</p>;
       case "text":
         return <p>{cellValue}</p>;
       case "similarity":
@@ -71,45 +84,76 @@ export default function Home() {
     }
   }, []);
 
-  return (
-    <div className="flex flex-col justify-center items-center w-full h-screen flex-wrap md:flex-nowrap gap-4 py-10">
-      <div className="flex w-2/5 flex-col gap-4">
-        <h1 className="flex justify-center text-2xl">Search Logs:</h1>
-        <Input
-          label="Input"
-          type="text"
-          onChange={(e) => {
-            setSearch(e.target.value);
-          }}
-        />
-        <div className="flex justify-center">
-          <Button color="primary" className="w-32" onPress={PostFetch}>
-            Button
-          </Button>
-        </div>
-      </div>
+  if (error) {
+    return <div>{error}</div>;
+  }
 
-      {!loading && (
-        <>
-          <h1 className="flex text-2xl w-4/5">Results:</h1>
-          <Table aria-label="Simple Table" className="w-4/5">
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn key={column.key}>{column.label}</TableColumn>
-              )}
-            </TableHeader>
-            <TableBody items={data?.results}>
-              {(item) => (
-                <TableRow key={item.key}>
-                  {(columnKey) => (
-                    <TableCell>{renderCell(item, String(columnKey))}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </>
-      )}
-    </div>
+  return (
+    <>
+      <Navbar disableAnimation isBordered>
+        <NavbarContent className="sm:hidden" justify="start">
+          <NavbarMenuToggle />
+        </NavbarContent>
+
+        <NavbarContent className="sm:hidden pr-3" justify="center">
+          <NavbarBrand>
+            <p className="">Piano Embrujado</p>
+          </NavbarBrand>
+        </NavbarContent>
+        <NavbarContent justify="center">
+          <NavbarBrand className="flex gap-3">
+            <Image
+              alt="Logo"
+              className="rounded-full"
+              height={40}
+              src="/logo.png"
+              width={40}
+            />
+            <p className="text-xl font-bold">Piano Embrujado</p>
+          </NavbarBrand>
+        </NavbarContent>
+      </Navbar>
+      <div className="flex flex-col justify-center items-center w-full flex-wrap md:flex-nowrap gap-4 p-10 ">
+        <div className="flex w-2/5 flex-col gap-4">
+          <h1 className="flex justify-center text-2xl">Search Logs:</h1>
+          <Input
+            label="Input"
+            type="text"
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
+          <div className="flex justify-center">
+            <Button className="w-32" color="primary" onPress={PostFetch}>
+              Button
+            </Button>
+          </div>
+        </div>
+
+        {!loading && (
+          <>
+            <h1 className="flex text-2xl w-4/5">Results:</h1>
+            <Table aria-label="Simple Table" className="w-4/5">
+              <TableHeader columns={columns}>
+                {(column) => (
+                  <TableColumn key={column.key}>{column.label}</TableColumn>
+                )}
+              </TableHeader>
+              <TableBody items={data?.results}>
+                {(item) => (
+                  <TableRow key={item.key}>
+                    {(columnKey) => (
+                      <TableCell>
+                        {renderCell(item, String(columnKey))}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </>
+        )}
+      </div>
+    </>
   );
 }
