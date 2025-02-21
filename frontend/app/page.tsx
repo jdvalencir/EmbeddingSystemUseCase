@@ -40,6 +40,9 @@ export default function Home() {
   const [error, setError] = useState<String>("");
 
   const PostFetch = async () => {
+    if (!search) {
+      return;
+    }
     try {
       const response = await fetch("http://localhost:8000/search/", {
         method: "POST",
@@ -123,16 +126,25 @@ export default function Home() {
               setSearch(e.target.value);
             }}
           />
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-4">
             <Button className="w-32" color="primary" onPress={PostFetch}>
-              Button
+              Search
+            </Button>
+            <Button
+              className="w-32"
+              color="danger"
+              onPress={() => setLoading(true)}
+            >
+              Clear
             </Button>
           </div>
         </div>
 
         {!loading && (
           <>
-            <h1 className="flex text-2xl w-4/5">Results:</h1>
+            <div className="w-4/5">
+              <h1 className="flex text-2xl w-4/5">Results:</h1>
+            </div>
             <Table aria-label="Simple Table" className="w-4/5">
               <TableHeader columns={columns}>
                 {(column) => (

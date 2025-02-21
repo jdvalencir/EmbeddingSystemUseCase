@@ -27,8 +27,6 @@ app.add_middleware(
 # Simulación de logs de sistemas embebidos
 df = pd.read_csv("data/logs.csv")
 
-print(df.head())
-
 # Función para obtener embeddings de Ollama
 def get_embedding(text):
     response = ollama.embeddings(model="nomic-embed-text", prompt=text)
